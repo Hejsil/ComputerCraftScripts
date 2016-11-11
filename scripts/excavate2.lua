@@ -87,11 +87,7 @@ end
 
 turtle2.face_south()
 
-dig_down_and_check_inventory()
-local running = turtle2.move_down()
-dig_down_and_check_inventory()
-turtle2.move_down()
-
+local running = true
 local mining_west = true
 while running do
     for i=1, size-1 do

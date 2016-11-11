@@ -263,7 +263,7 @@ end
 function move_to_x(to_x)
     if turtle_info.position.x > to_x then
         face_west()
-    else
+    elseif turtle_info.position.x < to_x then
         face_east()
     end
 
@@ -283,7 +283,7 @@ function move_to_y(to_y)
                 return false
             end
         end
-    else
+    elseif turtle_info.position.y < to_y then
         while turtle_info.position.y ~= to_y do
             if not move_up() then
                 return false
@@ -297,7 +297,7 @@ end
 function move_to_z(to_z)
     if turtle_info.position.z > to_z then
         face_north()
-    else
+    elseif turtle_info.position.z < to_z then
         face_south()
     end
 
@@ -311,7 +311,7 @@ function move_to_z(to_z)
 end
 
 function move_to(position)
-    local previous_position = get_turtle_position()
+    local previous_position = get_position()
 
     while turtle_info.position.x ~= position.x or turtle_info.position.y ~= position.y or turtle_info.position.z ~= position.z do
         move_to_x(position.x)
@@ -322,7 +322,7 @@ function move_to(position)
             return false
         end
 
-        previous_position = get_turtle_position()
+        previous_position = get_position()
     end 
 
     return true

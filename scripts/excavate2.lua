@@ -14,6 +14,17 @@ function has_fuel_to_dig()
     return turtle.getFuelLevel() > fuel_needed
 end
 
+function try_to_refuel()
+    local old_selected = turtle.getSelectedSlot()
+
+    for i = 1, 16 do
+        turtle.select(i)
+        turtle.refuel(turtle.getItemCount(i))
+    end
+
+    turtle.select(old_selected)
+end
+
 function return_and_desosit()
     turtle2.move_to(standard.zero_vector3())
     turtle2.face_north()
@@ -36,25 +47,38 @@ function return_deposit_and_come_back()
     turtle2.face(facing_direction)
 end
 
-function dig_up_and_check_inventory()
-    turtle.digUp()
+function check_inventory()
     if turtle2.are_all_slots_occupied() then
-        return_deposit_and_come_back()
+        try_to_refuel()
+
+        if turtle2.are_all_slots_occupied() then
+            return true
+        end
+    end
+    return false
+end
+
+function dig_and_check_inventory(direction)
+    turtle2.dig(direction)
+    if check_inventory() then
+        return_and_desosit()
     end
 end
 
-function dig_down_and_check_inventory()
-    turtle.digDown()
-    if turtle2.are_all_slots_occupied() then
-        return_deposit_and_come_back()
-    end
+function dig_up_and_check_inventory()
+    dig_and_check_inventory(turtle2.get_directions().up)
+end
+
+function dig_up_and_check_inventory()
+    dig_and_check_inventory(turtle2.get_directions().down)
 end
 
 function dig_move_and_check_inventory()
     while not turtle2.move_forward() do
-        turtle.dig()
+        turtle2.dig_forward()
     end
-    if turtle2.are_all_slots_occupied() then
+
+    if check_inventory() then
         return_deposit_and_come_back()
     end
 end
@@ -67,10 +91,14 @@ end
 
 function dig_tunnel_check_inventory()
     if not has_fuel_to_dig() then
-        turtle2.move_to(standard.zero_vector3())
-        turtle2.face_north()
-        turtle2.drop_all_items_forward()
-        error("I don't have enough fuel to continue D:")
+        try_to_refuel()
+
+        if not has_fuel_to_dig() then
+            turtle2.move_to(standard.zero_vector3())
+            turtle2.face_north()
+            turtle2.drop_all_items_forward()
+            error("I don't have enough fuel to continue D:")
+        end
     end
 
     dig_up_and_check_inventory()
@@ -80,47 +108,51 @@ function dig_tunnel_check_inventory()
     end
 end
 
-local success, data = turtle.inspect()
-if data.name ~= "minecraft:chest" then
-    error("the turtle has to be placed facing a chest before running 'excavate2'")
-end
-
-turtle2.face_south()
-
-local running = true
-local mining_west = true
-while running do
-    for i=1, size-1 do
-        dig_tunnel_check_inventory()
-
-        local mining_south = turtle2.facing_south()
-
-        if mining_west then
-            turtle2.face_east()
-        else
-            turtle2.face_west()
-        end
-        
-        move_forward_and_dig_out()
-
-        if mining_south then
-            turtle2.face_north()
-        else
-            turtle2.face_south()
-        end
+function main()
+    local success, data = turtle.inspect()
+    if data.name ~= "minecraft:chest" then
+        error("the turtle has to be placed facing a chest before running 'excavate2'")
     end
 
-    dig_tunnel_check_inventory()
+    turtle2.face_south()
 
-    turtle2.turn_around()
-    dig_down_and_check_inventory()
-    running = turtle2.move_down()
-    dig_down_and_check_inventory()
-    turtle2.move_down()
-    dig_down_and_check_inventory()
-    turtle2.move_down()
-    mining_west = not mining_west
+    local running = true
+    local mining_west = true
+    while running do
+        for i=1, size-1 do
+            dig_tunnel_check_inventory()
+
+            local mining_south = turtle2.facing_south()
+
+            if mining_west then
+                turtle2.face_east()
+            else
+                turtle2.face_west()
+            end
+            
+            move_forward_and_dig_out()
+
+            if mining_south then
+                turtle2.face_north()
+            else
+                turtle2.face_south()
+            end
+        end
+
+        dig_tunnel_check_inventory()
+
+        turtle2.turn_around()
+        dig_down_and_check_inventory()
+        running = turtle2.move_down()
+        dig_down_and_check_inventory()
+        turtle2.move_down()
+        dig_down_and_check_inventory()
+        turtle2.move_down()
+        mining_west = not mining_west
+    end
+
+    return_and_desosit()
+    print("Done :)")
 end
 
-return_and_desosit()
-print("Done :)")
+

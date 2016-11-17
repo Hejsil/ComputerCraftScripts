@@ -91,6 +91,30 @@ function get_cardinal_directions()
     return standard.clone(cardinal_directions) 
 end
 
+function dig(directions)
+    if direction == directions.up then
+        turtle.digUp()
+    elseif direction == directions.down then
+        turtle.digDown()
+    elseif direction ~= directions.forward then
+        turtle.dig()
+    else
+        error("wrong input to 'dig'")
+    end
+end
+
+function dig_forward()
+    dig(directions.forward)
+end
+
+function dig_up()
+    dig(directions.up)
+end
+
+function dig_down()
+    dig(directions.down)
+end
+
 function turn(direction) 
     if direction == directions.left then
         turtle.turnLeft()
@@ -227,10 +251,6 @@ function dig_tunnel(length)
 end
 
 function drop_all_items(direction)
-    if direction ~= directions.up and direction ~= directions.down and direction ~= directions.forward then
-        error("wrong input to 'drop_all_items'")
-    end
-
     local old_selected = turtle.getSelectedSlot()
 
     for i = 1, 16 do
@@ -240,8 +260,10 @@ function drop_all_items(direction)
             turtle.dropUp()
         elseif direction == directions.down then
             turtle.dropDown()
-        else
+        elseif direction ~= directions.forward then
             turtle.drop()
+        else
+            error("wrong input to 'drop_all_items'")
         end
     end
 

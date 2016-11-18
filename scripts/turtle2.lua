@@ -23,20 +23,20 @@ turning_table[cardinal_directions.north][cardinal_directions.east]  = { directio
 turning_table[cardinal_directions.north][cardinal_directions.south] = { direction = directions.right, times = 2 }
 turning_table[cardinal_directions.north][cardinal_directions.west]  = { direction = directions.left,  times = 1 }
 
-turning_table[cardinal_directions.east][cardinal_directions.north] = { direction = directions.left,  times = 1 }
-turning_table[cardinal_directions.east][cardinal_directions.east]  = { direction = directions.right, times = 0 }
-turning_table[cardinal_directions.east][cardinal_directions.south] = { direction = directions.right, times = 1 }
-turning_table[cardinal_directions.east][cardinal_directions.west]  = { direction = directions.right, times = 2 }
+turning_table[cardinal_directions.east][cardinal_directions.north]  = { direction = directions.left,  times = 1 }
+turning_table[cardinal_directions.east][cardinal_directions.east]   = { direction = directions.right, times = 0 }
+turning_table[cardinal_directions.east][cardinal_directions.south]  = { direction = directions.right, times = 1 }
+turning_table[cardinal_directions.east][cardinal_directions.west]   = { direction = directions.right, times = 2 }
 
 turning_table[cardinal_directions.south][cardinal_directions.north] = { direction = directions.right, times = 2 }
 turning_table[cardinal_directions.south][cardinal_directions.east]  = { direction = directions.left,  times = 1 }
 turning_table[cardinal_directions.south][cardinal_directions.south] = { direction = directions.right, times = 0 } 
 turning_table[cardinal_directions.south][cardinal_directions.west]  = { direction = directions.right, times = 1 }
 
-turning_table[cardinal_directions.west][cardinal_directions.north] = { direction = directions.right, times = 1 }
-turning_table[cardinal_directions.west][cardinal_directions.east]  = { direction = directions.right, times = 2 }
-turning_table[cardinal_directions.west][cardinal_directions.south] = { direction = directions.left,  times = 1 }
-turning_table[cardinal_directions.west][cardinal_directions.west]  = { direction = directions.right, times = 0 }
+turning_table[cardinal_directions.west][cardinal_directions.north]  = { direction = directions.right, times = 1 }
+turning_table[cardinal_directions.west][cardinal_directions.east]   = { direction = directions.right, times = 2 }
+turning_table[cardinal_directions.west][cardinal_directions.south]  = { direction = directions.left,  times = 1 }
+turning_table[cardinal_directions.west][cardinal_directions.west]   = { direction = directions.right, times = 0 }
 
 local turtle_info = {
     position = standard.zero_vector3(),
@@ -91,12 +91,12 @@ function get_cardinal_directions()
     return standard.clone(cardinal_directions) 
 end
 
-function dig(directions)
+function dig(direction)
     if direction == directions.up then
         turtle.digUp()
     elseif direction == directions.down then
         turtle.digDown()
-    elseif direction ~= directions.forward then
+    elseif direction == directions.forward then
         turtle.dig()
     else
         error("wrong input to 'dig'")
@@ -260,7 +260,7 @@ function drop_all_items(direction)
             turtle.dropUp()
         elseif direction == directions.down then
             turtle.dropDown()
-        elseif direction ~= directions.forward then
+        elseif direction == directions.forward then
             turtle.drop()
         else
             error("wrong input to 'drop_all_items'")

@@ -69,7 +69,7 @@ function dig_up_and_check_inventory()
     dig_and_check_inventory(turtle2.get_directions().up)
 end
 
-function dig_up_and_check_inventory()
+function dig_down_and_check_inventory()
     dig_and_check_inventory(turtle2.get_directions().down)
 end
 
